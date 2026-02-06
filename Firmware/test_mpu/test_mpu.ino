@@ -1,44 +1,53 @@
-#include <Adafruit_MPU6050.h>
-#include <Adafruit_Sensor.h>
 #include <Wire.h>
+#include <MPU6050_light.h>
 
-Adafruit_MPU6050 mpu;
+MPU6050 mpu(Wire);
+
+const int buzzerPin = 18; 
+unsigned long timer = 0;
 
 void setup() {
   Serial.begin(115200);
-  while (!Serial) delay(10); // Wait for Serial Monitor
-
-  Serial.println("Testing MPU6050...");
-
-  // Try to initialize!
-  if (!mpu.begin()) {
-    Serial.println("Failed to find MPU6050 chip. Check wiring!");
-    Serial.println("SDA should be on GPIO 21");
-    Serial.println("SCL should be on GPIO 22");
-    while (1) { delay(10); }
-  }
-
-  Serial.println("MPU6050 Found!");
+  Wire.begin(21, 22); // Explicitly define SDA, SCL pins
   
-  // Set to basic default range
-  mpu.setAccelerometerRange(MPU6050_RANGE_8_G);
-  mpu.setGyroRange(MPU6050_RANGE_500_DEG);
-  mpu.setFilterBandwidth(MPU6050_BAND_21_HZ);
+  pinMode(buzzerPin, OUTPUT);
+
+  Serial.println("Initializing MPU6050...");
+  
+  byte status = mpu.begin();
+  Serial.print("MPU6050 Status: "); Serial.println(status);
+  
+  // Status 0 means success
+  if(status != 0){
+    Serial.println("Could not connect to MPU6050! Check wiring.");
+    while(1); // Stop if failed
+  }
+  
+  Serial.println("Calculating offsets, DO NOT MOVE MPU6050...");
+  delay(1000);
+  mpu.calcOffsets(); // Auto-calibrate
+  Serial.println("Done! Setup complete.");
 }
 
 void loop() {
-  /* Get new sensor events with the readings */
-  sensors_event_t a, g, temp;
-  mpu.getEvent(&a, &g, &temp);
+  mpu.update(); // This does the math for you
 
-  /* Print out the values */
-  Serial.print("Accel X: "); Serial.print(a.acceleration.x);
-  Serial.print(", Y: "); Serial.print(a.acceleration.y);
-  Serial.print(", Z: "); Serial.print(a.acceleration.z);
-  
-  // Calculate simple tilt angle just to see if it makes sense
-  float angle = atan2(a.acceleration.x, a.acceleration.z) * 180 / PI; 
-  Serial.print(" | TILT ANGLE: "); Serial.println(angle);
+  // Get stable angle (Pitch is usually the forward/backward tilt)
+  float tiltAngle = mpu.getAngleX(); 
 
-  delay(500);
+  // Print every 200ms
+  if((millis() - timer) > 200){ 
+    Serial.print("Tilt Angle: ");x
+    Serial.println(tiltAngle);
+    
+    // Simple Alert Logic Test
+    if (abs(tiltAngle) > 25) { // If tilted more than 25 degrees
+      digitalWrite(buzzerPin, HIGH);
+      Serial.println(" -> BAD POSTURE!");
+    } else {
+      digitalWrite(buzzerPin, LOW);
+    }
+    
+    timer = millis();
+  }
 }
