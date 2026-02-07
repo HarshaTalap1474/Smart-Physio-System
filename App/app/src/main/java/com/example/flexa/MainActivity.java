@@ -34,7 +34,8 @@ public class MainActivity extends AppCompatActivity {
 
         // Initialize Firebase
         // NOTE: Ensure your google-services.json is in the /app folder
-        dbRef = FirebaseDatabase.getInstance().getReference();
+        // Use your specific URL inside getInstance()
+        dbRef = FirebaseDatabase.getInstance("https://flexa-22635-default-rtdb.firebaseio.com/").getReference();
 
         // Start Listening for Data
         listenForData();
