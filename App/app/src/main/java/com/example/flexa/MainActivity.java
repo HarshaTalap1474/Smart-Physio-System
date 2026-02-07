@@ -1,11 +1,10 @@
-package com.example.flexa; // Change to your actual package name
+package com.example.flexa;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -16,91 +15,94 @@ import com.google.firebase.database.ValueEventListener;
 public class MainActivity extends AppCompatActivity {
 
     // UI Components
-    private TextView txtEmergency, txtPostureValue, txtPostureStatus, txtJointValue;
+    private TextView txtPostureStatus, txtMuscleStatus, txtMuscleRaw, txtConnectionStatus;
 
-    // Firebase References
-    private DatabaseReference dbRef;
+    // Firebase Reference
+    private DatabaseReference patientRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Initialize UI Elements
-        txtEmergency = findViewById(R.id.txtEmergency);
-        txtPostureValue = findViewById(R.id.txtPostureValue);
+        // 1. Initialize UI
         txtPostureStatus = findViewById(R.id.txtPostureStatus);
-        txtJointValue = findViewById(R.id.txtJointValue);
+        txtMuscleStatus = findViewById(R.id.txtMuscleStatus);
+        txtMuscleRaw = findViewById(R.id.txtMuscleRaw);
+        txtConnectionStatus = findViewById(R.id.txtConnectionStatus);
 
-        // Initialize Firebase
-        // NOTE: Ensure your google-services.json is in the /app folder
-        // Use your specific URL inside getInstance()
-        dbRef = FirebaseDatabase.getInstance("https://flexa-22635-default-rtdb.firebaseio.com/").getReference();
+        // 2. Initialize Firebase
+        // NOTE: Use your exact URL
+        FirebaseDatabase database = FirebaseDatabase.getInstance("https://flexa-22635-default-rtdb.firebaseio.com/");
+        patientRef = database.getReference("Patient"); // Listen to "Patient" node
 
-        // Start Listening for Data
-        listenForData();
+        // 3. Start Listener
+        startMonitoring();
     }
 
-    private void listenForData() {
-
-        // 1. Listen for Posture Angle (MPU6050)
-        dbRef.child("PostureAngle").addValueEventListener(new ValueEventListener() {
+    private void startMonitoring() {
+        patientRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
-                    String angleStr = snapshot.getValue().toString();
-                    float angle = Float.parseFloat(angleStr);
+                    txtConnectionStatus.setText("● System Connected");
+                    txtConnectionStatus.setTextColor(Color.parseColor("#4CAF50")); // Green
 
-                    txtPostureValue.setText(angleStr + "°");
+                    // ============================================
+                    // 1. POSTURE LOGIC (SAFE vs UNSAFE)
+                    // ============================================
+                    String postureStr = snapshot.child("Posture").getValue(String.class);
 
-                    // Logic: Alert if posture is bad (e.g., > 30 degrees tilt)
-                    if (angle > 30) {
-                        txtPostureStatus.setText("Status: INCORRECT!");
-                        txtPostureStatus.setTextColor(Color.RED);
-                    } else {
-                        txtPostureStatus.setText("Status: Good");
-                        txtPostureStatus.setTextColor(Color.parseColor("#4CAF50")); // Green
+                    if (postureStr != null) {
+                        txtPostureStatus.setText(postureStr.toUpperCase());
+
+                        if (postureStr.equalsIgnoreCase("Safe")) {
+                            // Safe = GREEN
+                            txtPostureStatus.setBackgroundColor(Color.parseColor("#4CAF50"));
+                        } else {
+                            // Unsafe = RED (Alert)
+                            txtPostureStatus.setBackgroundColor(Color.parseColor("#D32F2F"));
+                        }
                     }
-                }
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {}
-        });
 
-        // 2. Listen for Joint Angle (Flex Sensor)
-        dbRef.child("JointAngle").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()) {
-                    String flexStr = snapshot.getValue().toString();
-                    txtJointValue.setText(flexStr + "°");
-                }
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {}
-        });
+                    // ============================================
+                    // 2. MUSCLE LOGIC (RELAXED vs ACTIVE)
+                    // ============================================
+                    String muscleStr = snapshot.child("MuscleStatus").getValue(String.class);
+                    Object rawObj = snapshot.child("MuscleRaw").getValue();
 
-        // 3. Listen for Emergency Status
-        dbRef.child("Emergency").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()) {
-                    int status = Integer.parseInt(snapshot.getValue().toString());
-
-                    if (status == 1) {
-                        // EMERGENCY TRIGGERED
-                        txtEmergency.setText("!!! EMERGENCY STOP !!!");
-                        txtEmergency.setBackgroundColor(Color.RED);
-                        Toast.makeText(MainActivity.this, "EMERGENCY STOP PRESSED", Toast.LENGTH_LONG).show();
-                    } else {
-                        // SYSTEM SAFE
-                        txtEmergency.setText("SYSTEM SAFE");
-                        txtEmergency.setBackgroundColor(Color.parseColor("#4CAF50")); // Green
+                    // Display Raw Value
+                    if (rawObj != null) {
+                        txtMuscleRaw.setText("Raw Sensor: " + rawObj.toString());
                     }
+
+                    // Color Logic for Muscle Status
+                    if (muscleStr != null) {
+                        txtMuscleStatus.setText(muscleStr.toUpperCase());
+
+                        if (muscleStr.equalsIgnoreCase("Relaxed")) {
+                            // Relaxed = BLUE (Calm)
+                            txtMuscleStatus.setBackgroundColor(Color.parseColor("#2196F3"));
+                        }
+                        else if (muscleStr.equalsIgnoreCase("Active")) {
+                            // Active = ORANGE (Energetic/Working)
+                            txtMuscleStatus.setBackgroundColor(Color.parseColor("#FF9800"));
+                        }
+                        else {
+                            // Unknown = GREY
+                            txtMuscleStatus.setBackgroundColor(Color.parseColor("#BDBDBD"));
+                        }
+                    }
+
+                } else {
+                    txtConnectionStatus.setText("⚠ Waiting for data...");
                 }
             }
+
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {}
+            public void onCancelled(@NonNull DatabaseError error) {
+                txtConnectionStatus.setText("Error: " + error.getMessage());
+            }
         });
     }
 }
