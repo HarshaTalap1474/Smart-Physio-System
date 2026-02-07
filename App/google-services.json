@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "237764066922",
+    "project_id": "flexa-22635",
+    "storage_bucket": "flexa-22635.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:237764066922:android:ba3a17b47ec8e713339413",
+        "android_client_info": {
+          "package_name": "com.example.flexa"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyASwlug3KOzETCgJTSYTgyWhV-rEAVnLJ0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
