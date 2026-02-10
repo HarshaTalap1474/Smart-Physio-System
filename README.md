@@ -73,10 +73,10 @@ This device:
 ## 📂 Project Structure
 
 Smart-Physio-System/<br>
-├── App/ # Android Studio project (Java/XML)<br>
-├── Firmware/ # ESP32 Arduino (.ino) source code<br>
-├── Circuit/ # Schematics and wiring diagrams<br>
-└── Documentation/ # Cost sheets and project reports<br>
+├── App/ Android Studio project (Java/XML)<br>
+├── Firmware/ ESP32 Arduino (.ino) source code<br>
+├── Circuit/ Schematics and wiring diagrams<br>
+└── Documentation/ Cost sheets and project reports<br>
 ---
 
 ## 🚀 How to Run
