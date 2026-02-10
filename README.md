@@ -1,136 +1,123 @@
-# \# Smart Physio System (IoT TENS \& Patient Monitoring)
+# 🧠 Smart Physio System  
+### IoT TENS & Patient Monitoring Device
 
-# 
+A wearable **IoT-based medical prototype** designed for automated physiotherapy and patient safety monitoring.  
+The system detects **muscle fatigue** and **posture abnormalities**, syncs data to the cloud in real time, and **automatically activates a TENS (Transcutaneous Electrical Nerve Stimulation) unit** when required.
 
-# A wearable IoT medical device designed for automated physiotherapy and patient safety monitoring. This system detects muscle fatigue and posture using sensors, syncs data to the cloud in real-time, and automatically triggers a TENS (Transcutaneous Electrical Nerve Stimulation) therapy unit when needed.
+---
 
-# 
+## 👨‍💻 Developer Information
 
-# \## 👨‍💻 Developer Information
+- **Developer:** Harsh Talap  
+- **Project Type:** IoT Medical Prototype  
+- **Date:** February 2026  
 
-# \*\*Developer:\*\* Harsh Talap  
+---
 
-# \*\*Project Type:\*\* IoT Medical Prototype  
+## 📌 Project Overview
 
-# \*\*Date:\*\* February 2026  
+The **Smart Physio System** assists patients during rehabilitation by continuously monitoring muscle activity and body posture.
 
-# 
+### ❗ Problem
+Patients often **over-exert muscles** or maintain **incorrect posture** without realizing it, leading to delayed recovery or injury.
 
-# ---
+### ✅ Solution
+This device:
+- Tracks **muscle strain** using a flex sensor  
+- Measures **body tilt and movement** using a gyroscope  
+- Automatically activates **TENS therapy** when fatigue is detected  
+- Logs all data to a **cloud-based mobile app** for medical review
 
-# 
+---
 
-# \## 📌 Project Overview
+## ⭐ Key Features
 
-# The Smart Physio System assists patients in rehabilitation by monitoring muscle activity and body posture.
+- **Auto-TENS Therapy**  
+  Automatically triggers muscle stimulation (via **TIP122 driver**) when the flex sensor detects fatigue.
 
-# \- \*\*Problem:\*\* Patients often over-exert muscles or maintain poor posture without realizing it.
+- **Fall & Posture Detection**  
+  Uses **MPU6050 (Gyroscope + Accelerometer)** to detect unsafe body angles (rolling / falling).
 
-# \- \*\*Solution:\*\* This device tracks muscle strain and tilt angles. If fatigue is detected, it automatically activates a TENS unit to relax the muscle. All data is logged to a mobile app for doctors to review.
+- **Real-Time Cloud Sync**  
+  ESP32 pushes live data to **Google Firebase Realtime Database**.
 
-# 
+- **Android App Dashboard**  
+  Custom Android app (`com.example.flexa`) displays:
+  - 🟢 **Safe Status**
+  - 🔴 **Unsafe Status**
 
-# \### Key Features
+- **Safety Engineering**
+  - Brownout protection  
+  - Battery optimization algorithms  
+  - Stable operation on a **9V portable power source**
 
-# \- \*\*Auto-TENS Therapy:\*\* Automatically triggers muscle stimulation (via TIP122 Driver) when the Flex sensor detects fatigue.
+---
 
-# \- \*\*Fall \& Posture Detection:\*\* Uses MPU6050 Gyroscope to detect unsafe body angles (Rolling/Falling).
+## 🛠️ Hardware & Bill of Materials
 
-# \- \*\*Real-Time Cloud Sync:\*\* ESP32 pushes live data to \*\*Google Firebase Realtime Database\*\*.
+*Based on the project cost sheet.*
 
-# \- \*\*Android App Dashboard:\*\* A custom app (`com.example.flexa`) displays "Safe" (Green) or "Unsafe" (Red) status instantly.
+| Component | Specification | Function |
+|---------|--------------|---------|
+| **Microcontroller** | ESP32-WROOM-32 | Main controller (WiFi + Logic) |
+| **Muscle Sensor** | Flex Sensor (2.2 inch) | Detects muscle bending & fatigue |
+| **Posture Sensor** | MPU6050 | 6-axis accelerometer & gyroscope |
+| **TENS Transformer** | 9-0-9 Step-Up (500mA) | Generates therapeutic high-voltage pulses |
+| **Driver Transistor** | TIP122 (Darlington) | High-current switching for transformer |
+| **Isolation** | PC817 Optocouplers | Protects ESP32 from voltage spikes |
+| **Power Source** | Hi-Watt 9V Battery | Portable power supply |
+| **Voltage Regulation** | LM2596 Buck Converter | Steps down 9V to 5V for ESP32 |
 
-# \- \*\*Safety Engineering:\*\* Includes \*\*Brownout Protection\*\* and \*\*Battery Optimization\*\* algorithms to run safely on a 9V battery.
+---
 
-# 
+## 📂 Project Structure
 
-# ---
+Smart-Physio-System/
+├── App/ # Android Studio project (Java/XML)
+├── Firmware/ # ESP32 Arduino (.ino) source code
+├── Circuit/ # Schematics and wiring diagrams
+└── Documentation/ # Cost sheets and project reports
+---
 
-# 
+## 🚀 How to Run
 
-# \## 🛠️ Hardware \& Bill of Materials
+### 1️⃣ Firmware Setup (ESP32)
 
-# \*Based on the project cost sheet.\*
+1. Open  
+   `Firmware/Sketch_for_esp/Sketch_for_esp.ino` in **Arduino IDE**
+2. Install required libraries:
+   - `Firebase_ESP_Client`
+   - `Adafruit_MPU6050`
+   - `Wire`
+3. Update **WiFi credentials** and **Firebase API Key** in the code
+4. Select board: **DOIT ESP32 DEVKIT V1**
+5. Upload the firmware
 
-# 
+---
 
-# | Component | Specification | Function |
+### 2️⃣ Android App Setup
 
-# | :--- | :--- | :--- |
+1. Open the `/App` folder in **Android Studio**
+2. Sync the project with **Gradle**
+3. Place `google-services.json` inside the `app/` directory
+4. Build and run on:
+   - Physical Android device  
+   - Android Emulator  
 
-# | \*\*Microcontroller\*\* | ESP32-WROOM-32 | Main Brain (WiFi + Logic) |
+---
 
-# | \*\*Muscle Sensor\*\* | Flex Sensor (2.2 Inch) | Detects muscle bending \& fatigue |
+## ⚠️ Safety Warnings
 
-# | \*\*Posture Sensor\*\* | MPU6050 | 6-Axis Accelerometer \& Gyroscope |
+- **High Voltage Alert**  
+  The TENS unit generates high-voltage pulses.  
+  **Do NOT touch electrode output wires** while the device is active.
 
-# | \*\*TENS Transformer\*\* | 9-0-9 Step-Up (500mA) | Generates high-voltage therapeutic pulses |
+- **Battery Safety**  
+  When powered by a 9V battery, the firmware limits WiFi power consumption to prevent **brownout and voltage drops**.
 
-# | \*\*Driver Transistor\*\* | TIP122 (Darlington) | High-current switching for the transformer |
+---
 
-# | \*\*Isolation\*\* | PC817 Optocouplers | Protects ESP32 from high-voltage spikes |
+## 📌 Disclaimer
 
-# | \*\*Power\*\* | Hi-Watt 9V Battery | Portable power source |
-
-# | \*\*Regulation\*\* | LM2596 / Buck Converter | Steps down 9V to 5V for ESP32 |
-
-# 
-
-# ---
-
-# 
-
-# \## 📂 Project Structure
-
-# \- \*\*`/App`\*\*: Android Studio Project (Java/XML) for the patient monitoring app.
-
-# \- \*\*`/Firmware`\*\*: Arduino IDE code (`.ino`) for ESP32 logic and sensor fusion.
-
-# \- \*\*`/Circuit`\*\*: Schematics and wiring diagrams.
-
-# \- \*\*`/Documentation`\*\*: Cost sheets (`components.pdf`) and project reports.
-
-# 
-
-# ---
-
-# 
-
-# \## 🚀 How to Run
-
-# 
-
-# \### 1. Firmware Setup (ESP32)
-
-# 1\. Open `Firmware/Sketch\_for\_esp/Sketch\_for\_esp.ino` in Arduino IDE.
-
-# 2\. Install required libraries: `Firebase\_ESP\_Client`, `Adafruit\_MPU6050`, `Wire`.
-
-# 3\. \*\*Important:\*\* Update your WiFi credentials and Firebase API Key in the code.
-
-# 4\. Upload to the \*\*DOIT ESP32 DEVKIT V1\*\* board.
-
-# 
-
-# \### 2. Android App Setup
-
-# 1\. Open the `/App` folder in \*\*Android Studio\*\*.
-
-# 2\. Sync the project with Gradle files.
-
-# 3\. Ensure your `google-services.json` is placed in the `app/` folder.
-
-# 4\. Build and Run on a physical Android device or Emulator.
-
-# 
-
-# ---
-
-# 
-
-# \## ⚠️ Safety Warnings
-
-# \- \*\*High Voltage:\*\* The TENS unit generates high-voltage pulses. Do not touch the electrode output wires directly while the device is active.
-
-# \- \*\*Battery Safety:\*\* If using a standard 9V battery, the firmware automatically limits WiFi power to prevent voltage drops (Brownout).
-
+This project is a **prototype for educational and research purposes only**.  
+It is **not a certified medical device** and should not be used for clinical treatment without professional supervision.
