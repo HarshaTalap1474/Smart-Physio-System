@@ -8,7 +8,7 @@ The system detects **muscle fatigue** and **posture abnormalities**, syncs data 
 
 ## 👨‍💻 Developer Information
 
-- **Developer:** Harsh Talap  
+- **Developer:** Harshavardhan Talap  
 - **Project Type:** IoT Medical Prototype  
 - **Date:** February 2026  
 
@@ -72,11 +72,11 @@ This device:
 
 ## 📂 Project Structure
 
-Smart-Physio-System/
-├── App/ # Android Studio project (Java/XML)
-├── Firmware/ # ESP32 Arduino (.ino) source code
-├── Circuit/ # Schematics and wiring diagrams
-└── Documentation/ # Cost sheets and project reports
+Smart-Physio-System/<br>
+├── App/ # Android Studio project (Java/XML)<br>
+├── Firmware/ # ESP32 Arduino (.ino) source code<br>
+├── Circuit/ # Schematics and wiring diagrams<br>
+└── Documentation/ # Cost sheets and project reports<br>
 ---
 
 ## 🚀 How to Run
