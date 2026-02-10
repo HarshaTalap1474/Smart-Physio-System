@@ -1,0 +1,32 @@
+SMART PHYSIO SYSTEM - WIRING GUIDE
+===================================================
+
+1. SENSOR UNIT (ESP32 Connections)
+---------------------------------------------------
+| Component       | ESP32 Pin      | Notes                          |
+| :---            | :---           | :---                           |
+| MPU6050 (SDA)   | GPIO 21        | I2C Data                       |
+| MPU6050 (SCL)   | GPIO 22        | I2C Clock                      |
+| MPU6050 (VCC)   | 3.3V           | Do not connect to 5V           |
+| Flex Sensor     | GPIO 34        | Analog Input (requires 10k res)|
+| Buzzer (+)      | GPIO 19        | Active High Alarm              |
+| WiFi LED        | GPIO 2         | Onboard Status LED             |
+| TENS Trigger    | GPIO 4         | Signal to Transistor Base      |
+| Ground          | GND            | Common Ground with TENS Battery|
+
+2. TENS UNIT (High Voltage Driver)
+---------------------------------------------------
+| Component       | Connection     | Notes                          |
+| :---            | :---           | :---                           |
+| Transistor      | TIP122 (NPN)   | Mounted on Heatsink            |
+| Base Pin        | 1k Resistor    | Connects to ESP32 Pin 4        |
+| Collector Pin   | Transformer 9V | Side tap of Transformer        |
+| Emitter Pin     | GND            | Battery Negative               |
+| Transformer 0V  | +9V Battery    | Center tap to Positive         |
+| Flyback Diode   | 1N4007         | Cathode to +9V, Anode to Coll. |
+
+3. POWER SUPPLY (Dual Source)
+---------------------------------------------------
+- SOURCE A: 9V Hi-Watt Battery -> Powers TENS Transformer only.
+- SOURCE B: USB Power Bank -> Powers ESP32 (Isolation).
+- COMMON GROUND: Wire connecting ESP32 GND to 9V Battery (-) is REQUIRED.
